@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CSV.swift",
+        "repositoryURL": "https://github.com/yaslab/CSV.swift",
+        "state": {
+          "branch": "master",
+          "revision": "81d2874c51db364d7e1d71b0d99018a294c87ac1",
+          "version": null
+        }
+      },
+      {
+        "package": "Neat",
+        "repositoryURL": "https://github.com/troydeville/NEAT-swift",
+        "state": {
+          "branch": "master",
+          "revision": "9e590f51097f546e1d37618474d26bd55dab6128",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
