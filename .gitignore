@@ -297,6 +297,8 @@ _minted*
 *.sagetex.py
 *.sagetex.scmd
 
+*.weights
+
 # scrwfile
 *.wrt
 
@@ -711,3 +713,7 @@ fastlane/test_output
 iOSInjectionProject/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,latex,java,swift,c,c++,pycharm
+
+3-Tests/4-OCR/Icon
+
+3-Tests/3-Tabellen Detektion/Icon
