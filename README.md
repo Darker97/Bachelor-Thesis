@@ -1,5 +1,4 @@
-# BachelorProjekt
-
+# BachelorThese
 ## Aufbau 
 
 - Dokumente
