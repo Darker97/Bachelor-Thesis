@@ -1,0 +1,1 @@
+Jeder Ordner steht hier für einen Abschnitt der gesammt Umsetzung. Darin befinden sich dann die einzelnen Tests
