@@ -1,4 +1,4 @@
-# Abstract
+## Abstract
 # Einleitung
 In Zeiten von Industrie 4.0 und Digitalisierung werden immer größere Datenmengen elektronisch gespeichert und verarbeitet. Da bisherige Speicherungen zumeist ausschließlich in Papierform vorlagen, werden Systeme benötigt, welche diese in eine digitale Form übersetzten. Das Deutsche Zentrum für Luft und Raumfahrt entwickelt für Technische Dokumentationen ein System, welches diese Aufgabe erfüllen soll.
 
@@ -60,7 +60,7 @@ Swift ist eine Multiparadimische Compilersprache, welche auf c basiert. Aufgrund
 
 Um die bereits bestehenden Tools, Programme oder Systeme zu testen oder einzurichten werden Testdaten benötigt.
 
-Hierfür stehen einige Datenpools zu Verfügung, welche sich in Umfang und Aufbau unterscheiden. Dabei wurden Datenblätter von Herstellern von Raumfahrtkomponenten für DLR und ESA sowie ein Datensatz der Firma IBM Australia genutzt, welche aus mehreren Tausend Dokumente besteht. 
+Hierfür stehen einige Datenpools zu Verfügung, welche sich in Umfang und Aufbau unterscheiden. Dabei wurden Datenblätter von Herstellern von Raumfahrtkomponenten für DLR und ESA sowie ein Datensatz der Firma IBM Australia  namens PubLayNet genutzt, welche aus mehr als 300.000 Dokumente besteht. 
 
 Die Dokumente müssen dabei vor der Nutzung noch manuell vorbereitet werden. 
 
@@ -68,6 +68,8 @@ Die Dokumente müssen dabei vor der Nutzung noch manuell vorbereitet werden.
 Ein Künstliches Neuronales Netz (KNN) ist eine Methode zur Informationsverarbeitung. Dabei wird, nahe dem Vorbild des Gehirns, ein Netz aus Neuronen erzeugt.
 Ein Neuron ist dabei ein Object, welches aus einem Input einen Output erzeugt. Die Ausgabe wird dabei durch eine Aktivierungsfunktion und den Aufbau des Neurons bestimmt.
 Das Netz besteht aus mehreren Schichten. Jede Schicht besteht aus mehreren Neuronen, welche mit den Neuronen der nächsten Schicht verbunden sind. 
+
+![DarstellungeineskünstlichenNeurons](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/DarstellungeineskünstlichenNeurons.png)
 
 Jede Verknüpfung zwischen den Neuronen, sowie die Neuronen selbst haben einen Bias welcher eine Gewichtung des entsprechenden Objects darstellt. 
 
@@ -165,19 +167,133 @@ Leider wurde auch dieses Model nicht veräffentlicht, wodurch das Ergebniss nich
 Dadurch das keins der betrachteten Netze direkt Nutzbar ist, wurde die Methodik mit eigenen Mitteln umgesetzt. 
 Durch die Recherche wurde jedoch eine Umsetzung auf Basis des PDF und seiner Codestruktur ausgeschlossen, da die Methodik auch mit Dokumenten funktionieren soll welche z.b. aus Bildern oder Scanns entstanden sind. Daher werden alle Dokumente bereits vor Beginn des Prozesses in Bilddateien umgewandelt. Dadurch wird außerdem die Verwendung vereinfacht.
 
-+++
-
 # Hauptteil - Prozessschritte und Tests
 
+## Tabellen Erkennung
+
+Ein Dokument kann in mehrere Bestandteile/Objecten wie Textbausteine, Überschriften oder Tabellen aufgeteilt werden. Alle haben dabei eine eigene Struktur wie eine gemeinsame Dicke, eine einheitliche Vor- und Nachbreite oder eine einheitliche Breite der Zeichen. 
+Diese ist zwar im Object selbst konsistent, kann jedoch über mehrere Objecte unterschiedlich sein.
+Kennt man die Inhaltliche Bedeutung der Objecte nicht, ist diese Struktur die einige Möglichkeit herauszufinden, um welche Art es sich handelt, und in welchem Bereich Sie sich befinden. 
+
+### Klasssische Bilbearbeitung
+
+Die Klassische Bildverarbeitung kennt viele Wege um einheitliche Strukturen in Bildern zu erkennen und zu verändern. Dabei werden unterschiedliche Algorithmen eingesetzt um einzelne Strukturen des Bildes zu verschärfen oder Kanten zu erkennen.
+
+Die Library OpenCV bietet diese Funktionen. Bei entsprechenden Tests zeigte sich jedoch, dass die einzelnen Zeichen in ihrer Struktur nicht deutlich genug sind.  
+
+![TestDerObjectDetection](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/TestDerObjectDetection.png)
+
+Es zeigte sich außerdem, dass die entsprechenden Algorithmen bei den Orginal Dokumenten aufgrund ihrere Größe sehr lange brauchen. 
+
+Um diese Probleme zu umgehen wurden die Dokumente zunächst geblurred und kompremiert. Hierzu wurden Bereiche von Pixeln zusammengefasst und auf einen Durchschnittswert gesetzt. Hierdurch sind die einzelnen Buchstaben nicht mehr erkennbar, was allerdings für die Erkennung auch nicht Notwendig ist. Das Ergebnis muss jedoch in Zukunft wieder hochskaliert werden.
+
+Des weiteren wurde ein Erkennungsfilter erstellt. Da Tabellen eine einheitliche Struktur haben, kann auch direkt nach denen gesucht werden. 
+Die Struktur einer Tabelle kann dabei in Form einer Sinuskurve mit folgender Formel abgebildet werden:
+
+$f(x)=\sin(\frac{x}{b} * 2\pi)$  
+
+Dabei stelt b die länge des Filters, bzw. die Länge der gesuchten Spalte da. 
+Stellt man sich die Kurve grafisch vor, so stellen die positiven Stellen den Spalten der Tabelle dar, die negativen den Abstand zur nächsten. 
+
+Als Längen werden dabei Bruchteile der Seitenbreite genutzt, z.b. die Hälfte, ein Drittel oder ein Viertel. Der entsprechenden Filter wird dann in X und Y Richtung über das Bild geschoben und ein Summierten Zwischenwert von Filter und betrachteter Spalte oder Zeile berechnet. Daraus ergeben sich zwei Heatmaps, welche wieder kombinieren sind.
+
+![HeatMap in X-Richtung](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/HeatMapinX-Richtung.png)
+
+![HeatMap in Y-Richtung](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/HeatMapiny-Richtung.png)
+
+Die Stellen an denen beide Heatmaps einen Auschlag markieren, wird nun in einer Kombination ebenfalls markiert.
+
+![Zielmap](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/Zielmap.png)
+
+Im Ergebnis ist die Tabelle noch deutlich erkennbar. Leider weisen jedoch auch Teile des Textes die gleichen Muster wie eine Tabelle auf, weswegen Sie auf diesem Bild auch vertreten sind.
+
+Dadurch ist das Ergebnis leider nicht eindeutig, es kann jedoch für weitere Analysen genutzt werden. 
+Dafür wurden drei Möglichkeiten geplant: 
+
+##### Ansatz Eins: Verbessern der Filter
+
+Der erste Ansatz greift beim Erstellen der Filter. Dabei wird ein Künstliches NN trainiert, welches die Frequenzanalyse der unterschiedlich langen Filter als Input nimmt, und dann auf Basis der Änderungen erkennt entscheidet welcher Filter am besten ge- eignet ist. Das Netz muss dabei mehrere Bilder als Input nutzen können und eine Zahl ausgeben.
+
+##### Ansatz Zwei: Analyse der Heatmap
+
+In einem zweiten Ansatz wird das entsprechende Bild zunächst mittels Frequenzanalyse in eine Heatmap umgewandelt. Auf Basis dieser wird dann ein Neuronales Netz trainiert, welches aus der Kombination die Tabelle erkennen kann. 
+
+Anders als beim ersten Entwurf muss nur ein Bild analysiert werden. Die Analyse kann dabei entweder durch Dense Layer oder durch ein CNN durchgeführt werden, welches später noch genauer beleuchtet wird.
+
+##### Ansatz drei: Eine Kombination
+
+Der dritte Ansatz setzt an der gleichen Stelle an wie der erste, soll jedoch nun die Position der Tabelle ausgeben. Dabei werden die gleichen Ergebnisse wie zu Beginn in das Netz geladen. Das Netz soll nun jedoch die veränderten Bilder analysieren und so erkennen, wo sich die Tabelle befindet.
+
+#### Einsatz von Neuronalen Netzen
+
+Aufgrund der Zeitlichen Beschränkung wurde nur der zweite Ansatz umgesetzt. 
+
+Für das Training werden dabei Testdaten benötigt. Um die Machbarkeit des Prinzips festzustellen wurden zunächst synthetische Daten erzeugt. Dabei wurde das gewünschte Muster mit einer zufälligen Sinuskurve erstellt und der Hintergrund mit einem Rauschen belegt. Das Netz sollte dabei lernen nur die Tabelle zu erkennen und das Rauschen nicht zu beachten. 
+Dabei ist jedoch zu beachten, dass die Testdaten zunächst deutlich kleiner im Umfang sind als die orginal Dokumente.
+
+![TestBild](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/TestBild.png)
+
+Zunächst wurde das Netz trainiert um eine Maske zu erstellen welche die Zielfläche markieren sollte. Die ersten Tests zeigten jedoch das das Netz bei den gegebenen Beispielen als Ergebnis nur eine einfarbige Fläche ausgibt. Das hier gezeigte Problem wurde zunächst als Overfitting oder im Deutschen als ”Überanpassung” eingestuft. Dabei Spezialisiert sich ein bestehendes System zu stark auf die gegebenene Testdaten. Dadurch erzielt es bei diesen Daten nahezu perfekte Ergebnisse, jedoch kann es keine neuen Beispiele mehr lösen. Gegen diese Einschätzung spricht jedoch, dass das bestehende Netz die gegebenen Beispiele nicht gelöst hat, sondern nur eine Minimallösung für das Problem erbrachte. 
+Um diesen Effekt aufzuheben wurden mehrere Tests durchgeführt. Dabei wurden verschiedene Variablen wie die Learn Rate oder die Anzahl an zusätzlichen Schichten angepasst, was jedoch nur bedingt zu einer Verbesserung der Situation führte. Gleichzeitig zeigte sich in allen Modellen ein gleicher Trainingsverlauf. Dabei stieg die Genauigkeit während des Trainings an, jedoch gleichzeitig auch der loss Wert. Dieser beschreibt das Ergebnis der Kostenfunktion und sollte im Verlauf der Optimierung eigentlich sinken.
+
+Das Netz wurde daher umgebaut, so dass nun direkt Zielkoordinaten ausgegeben wurden. Dieser Ansatz brachte deutlich bessere Ergebnisse:
+
+![Trainings Verlauf](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/TabellenerkennungTrainingsAuswertung.png)
+
+In folgendem Beispiel stellt die Gelbe Fläche den gesuchten Bereich dar. Das Ergebnis des Netzes wird in Rot dargestellt.
+
+![TabellenerkennungTrainingsBeispielBild](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/TabellenerkennungTrainingsBeispielBild.png)
+
+Das Ergebnis ist nicht perfekt, zeigt jedoch das die generelle Fuktionsweise funktioniert.
+
+Beim Training stellte sich jedoch auch eine Einschränkung herraus: 
+Für eine Nutzung mit den Orginal Dokumenten muss das Netz in seinem Umfang deutlich vergrößert werden. Dadurch müssen deutlich mehr Dokumente fürs Training genutzt werden um gleiche Ergebnisse zu erzielen. Dadurch erhöht sich außerdem der Zeitliche Aufwand den das Netz zum trainieren benötigt massiv. 
+
+Das Netz ist außerdem darauf ausgelegt eine Tabelle zu erkennen. Sollten mehrere Tabellen auf dem Dokumenten vorhanden sein funktioniert das Netz nicht mehr wie vorgesehen. 
+
+Ein weiteres Problem ist die Zeit welche das System benötigt um ein Dokument zu verarbeiten. Durch die vorherige Verarbeitung benötigt das Netz häufig bis zu einer Minute pro Dokument. 
 
 
-### Finden der Tabelle
-#### Bildbearbeitung
-#### Object Detection
-##### Kleine Geschichte der Object Detection
-#### Yolo Netz 
+
+Um diese Probleme zu lösen wurde das Netz neu geplant. Dabei wurde unter anderem die Aufgabe des Netzes neu bedacht.
+
+#### PLATZHALTER
+
+Aufbauend auf den erfolgen des DeepDeSRT wurde das Netz neu entworfen. Nun soll das Netz nicht mehr erkennen wo die Tabelle ist, sondern ein gegebenes Bild klassifizieren. Das Prinzip wird dabei in der Object Detection verwendet.
+
+Dabei werden Bildausschnitte gewählt, welche dann durch ein Neuronales Netz klassifiziert wird. Dabei gibt das NN eine Wahrscheinlichkeit aus.
+
+Um die Bildausschnitte zu wählen gibt es verschiedene Methoden: Zum einen kann das gesamte Bild in Ausschnitte unterteilt werden um alle zu klassifizieren. Durch die Anzahl an möglichen Ausschnitten dauert diese Methode entsprechend lang.
+Diese Methode kann verbessert werden, indem man zunächst Bereiche des Bildes mit ähnlichen Kontouren, Farben oder intensität zusammenfasst und diese dann Klassifiziert. Dies beschleunigt den Vorgang deutlich.
+
+Einen neuen Ansatz bietet das YOLO Netz
+
+#### Yolo, You only look once
+
+Yolo wurde von Joseph Redmon und Ali Farhadi der University of Washington entwicjelt und ist ein völlig neuer Ansatz der Objekt Erkennung. Dabei wird das Netz nicht mehr in einzelne Teile zerlegt, sondern durch ein einziges Netz geschickt. Das Netz unterteilt das Bild dann selbst in Boxen welches es klassifiziert. Durch diese Methode wird zum einen nur noch ein Netz pro Bild benötigt. Zum anderen ist es laut Aussage der Entwickler 1000 mal schneller als den herkömlichen Methoden.
+
+Auf Grund dieser Prozess Beschleunigung wurde Yolo als Netz gewählt. Das Netz wurde dabei mit dem PubLayNet Trainingsset trainiert. Anders als beim DeepDeSRT wurde das Netz nicht einzig auf Tabellen trainiert, sondern auf alle möglichen Beispiele. Es wurde außerdem auf die Kompremierung verzichtet. Durch den neuen Aufbau des Netzes können nun Dokumente in ihrer ursprünglichen Größe geladen werden ohne einen Nachteil zu erhalten.
+
+Dabei wurden folgende Klassifizierungen identifiziert:
+
+1. Text
+2. Überschrift
+3. Liste
+4. Tabelle
+5. Figur/Grafik
+
+Nach dem Training wurden mehrere Tests mit Beispiel Dokumenten durchgeführt. Dabei zeigte sich, dass das Netz alle Objecte erkennt, jedoch die Bereicht nicht perfekt beschreiben kann. 
+
+![result](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/result.jpg) 
+
 #### Ergebnis
-### OCR
+
+Bei der Nutzung des Netzes fielen noch weitere Effekte auf. 
+Füttert man das Netz mit Dokumenten größerer Pixeldichte so erkennt das Netz keine Objekte. Eine Theorie hierfür wäre, dass das Netz Pixelgenau arbeitet. Die entsprechden Objecte sind bei einem Dokument von größere Pixeldichte jedoch deutlich zu groß um erkannt zu werden. Dieser Umstand kann jedoch umgangen werden indem das Dokument auf die Größe der Testdokumente verkleinert wird.
+
+Die Abweichung der Boxen kann durch einen Filter behoben werden. Dieser würde die Kanten der einzelnen Objecte erkennen und so die Boxen anpassen. Aufgrund der Zeitlichen Einschränkung der These wurde diese Optimierung nicht durchgeführt.
+
+## OCR
 
 Die Schrifterkennung soll aus der gefundenen Tabelle die Wörter, Zahlen und Buchstaben extrahieren.
 
@@ -213,7 +329,7 @@ Je nach Kategorisierung der Daten müssen die Cloud Dienste dann die Vorgaben d
 
 Auf Grundlage dieser Regelungen und extra Anforderungen, wurde entschieden für diese Arbeit die oben genannten Offline Tools zu nutzen.
 
-### Kontext Detektion
+## Kontext Detektion
 
 - [ ] Warum?
 - [ ] Wie umgesetzt?
@@ -233,7 +349,7 @@ Dafür wurden 5 Möglichkeiten definiert.
 
 
 
-### Prototypische Umsetzung
+## Prototypische Umsetzung
 
 Um eine Real Anwendung zu demonstrieren, wurde die Pipeline in einem Prototyp umgesetzt. Dieser wurde in Form einer IPhone Application ausgearbeitet um ein reales Beispiel zu bilden.
 Da sich nicht alle Teile der Pipeline im IOS System umsetzten lassen, wurden Teile wie die Tabellen Erkennung durch das YOLO Netz an eine Server-Applikation ausgelagert. 
