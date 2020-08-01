@@ -268,7 +268,7 @@ Diese Methode kann verbessert werden, indem man zunächst Bereiche des Bildes mi
 
 Einen neuen Ansatz bietet das YOLO Netz
 
-#### Yolo, You only look once
+#### Yolo - You only look once
 
 Yolo wurde von Joseph Redmon und Ali Farhadi der University of Washington entwicjelt und ist ein völlig neuer Ansatz der Objekt Erkennung. Dabei wird das Netz nicht mehr in einzelne Teile zerlegt, sondern durch ein einziges Netz geschickt. Das Netz unterteilt das Bild dann selbst in Boxen welches es klassifiziert. Durch diese Methode wird zum einen nur noch ein Netz pro Bild benötigt. Zum anderen ist es laut Aussage der Entwickler 1000 mal schneller als den herkömlichen Methoden.
 
@@ -293,15 +293,20 @@ Füttert man das Netz mit Dokumenten größerer Pixeldichte so erkennt das Netz 
 
 Die Abweichung der Boxen kann durch einen Filter behoben werden. Dieser würde die Kanten der einzelnen Objecte erkennen und so die Boxen anpassen. Aufgrund der Zeitlichen Einschränkung der These wurde diese Optimierung nicht durchgeführt.
 
-## OCR
+Nachdem man die Tabellen nun mit Postionen finden kann, wird ein weiterer Mechanismus benötigt um die entsprechenden Felder zu finden. Da Tabellen in ihrem Aussehen und Aufbau sehr unterschiedlich sind, reicht ein klassischer Algorithmus nicht aus. 
+ALs Lösung für dieses Problem wurde zunächst Gepalant das YOLO Netz erneut einzusetzen, diesmal allerdings darauf trainiert Blöcke von Zeichen zu finden. Eine Alternative dazu ist die Schrifterkennung.
+
+## OCR - Optical Character Recognition
 
 Die Schrifterkennung soll aus der gefundenen Tabelle die Wörter, Zahlen und Buchstaben extrahieren.
 
-Die entsprechende Technik wurde bereits 1958 zum ersten mal vorgestellt. Dabei erstellten Frank Rosenblatt und Charles Wightman in Zusammenarbeit mit dem MIT und dem Ünited States Office of Naval Research das Mark 1 perceptron. Damals noch eher in Form eines physischen Computers als einer Software, konnte dieser bereits einfache Ziffern in Bildern der Maße 20 x 20 Pixeln erkennen. Das zugrundeliegende Verfahren wurde seitdem immer weiter verbessert, und ist heute ein gut erforschtes Feld mit vielen verschiedenen Lösungen.
+Die entsprechende Technik wurde bereits 1958 zum ersten mal vorgestellt. Dabei erstellten Frank Rosenblatt und Charles Wightman in Zusammenarbeit mit dem MIT und dem United States Office of Naval Research das Mark 1 perceptron. Damals noch eher in Form eines physischen Computers als einer Software, konnte dieses System bereits einfache Ziffern in Bildern der Maße 20 x 20 Pixeln erkennen. Das zugrundeliegende Verfahren wurde seitdem immer weiter verbessert, und ist heute ein gut erforschtes Feld mit vielen verschiedenen Lösungen.
 
 Für dieses Projekt wurden mehrere freie Tools für die Schrifterkennung getestet. Besonders stachen dabei das Tool Tesseract und die Vision Library des IOS Systems hervor. Beide sind offline Lösungen. 
 
-Tesseract ist eine von Google Entwickelte freie Texterkennungssoftware. Sie kann Textzeichen und Textzeilen erkennen, sowie Layoutanalysen durchführen. Dabei beherrscht das Programm mehr als 100 Sprachen, sowie mehrere verschiedene Schriften wie Chinesisch, Arabisch oder Griechisch. Nach Aussage eines Test der Zeitschrift c’t (QUELLE?) nutzt Google das Tool selbst für eigene Produkte wie Google Books. Dabei soll das Tool an ähnliche Erkennungsraten und Verarbeitungsgeschwindigkeiten wie kommerzielle Tools herankommen. Auf welcher Grundlage diese Aussagen getroffen wurden oder auf welche Tools sich bezogen wird wird in diesem Test leider nicht genannt. Für die Nutzung in diesem Projekt sollte die Leistung dabei jedoch trotzdem ausreichend sein. In ersten Tests zeigte sich die Einschränkung des Tools. Zeichen wie das Doller Zeichen ($) werden gerne als 5 oder gar nicht erkannt. 
+Tesseract ist eine von Google Entwickelte freie Texterkennungssoftware. Sie kann Textzeichen und Textzeilen erkennen, sowie Layoutanalysen durchführen. Dabei beherrscht das Programm mehr als 100 Sprachen, sowie mehrere verschiedene Schriften wie Chinesisch, Arabisch oder Griechisch. Nach Aussage eines Test der Zeitschrift c’t (QUELLE?) nutzt Google das Tool selbst für eigene Produkte wie Google Books. Dabei soll das Tool an ähnliche Erkennungsraten und Verarbeitungsgeschwindigkeiten wie kommerzielle Tools herankommen. Auf welcher Grundlage diese Aussagen getroffen wurden oder auf welche Tools sich bezogen wird wird in diesem Test leider nicht genannt. Für die Nutzung in diesem Projekt sollte die Leistung dabei jedoch trotzdem ausreichend sein. 
+
+In ersten Tests zeigte sich aber auch Einschränkungen des Tools. Zeichen wie das Doller Zeichen ($) werden beispielsweise gerne als 5 oder gar nicht erkannt. 
 
 Das Vision Framework des IOS Systems bietet verschiedene Funktionen, unter anderem eine eigene Texterkennung. Die Implementierung ist dabei im IOS System standardmäßig vorhanden und für den Einsatz optimiert. 
 
@@ -311,53 +316,81 @@ Im Bereich der Schrifterkennung gibt es auch einige online Tools, wie z.b. Amazo
 
 #### Rechtliche und Technische Betrachtung von Online Lösungen
 
-Die zuletzt betrachteten Tools sind Online Services. Dies bedeutet, dass alle zu verarbeitenden Dokumente zunächst hochgeladen werden müssen und auf den Servern des Anbieters verarbeitet werden. Dies bedeutet, dass alle Tools auf eine Online Nutzung ausgelegt werden müssen und nur mit Verbindung zum Server funktionieren. Dies schränkt eine Nutzung auf Mobilen Geräten oder in abgeschotteten Intranets ein.
+Die zuletzt betrachteten Tools sind Online Services. Dies bedeutet, dass alle zu verarbeitenden Dokumente zunächst zu einem Server hochgeladen werden müssen und auf den Servern des Anbieters verarbeitet werden. Dies bedeutet, dass alle Tools auf eine Online Nutzung ausgelegt werden müssen und nur mit Verbindung zum Server funktionieren. Dies schränkt eine Nutzung auf Mobilen Geräten oder in abgeschotteten Intranets ein.
 
-Bei der Verarbeitung von Daten müssen in Deutschland, abhängig von Art und Schutzbedarf, gewisse Regelungen zur Informationssicherheit und zum Datenschutz beachtet werden. Das Bundesamt für Sicherheit in der Informationstechnik (kurz BSI) hat hierfür Standards erstellt mit denen eine Risikoanalyse durchgeführt werden kann. Anforderungen und Bewertungen werden dabei in Reihe 2700-x der ISO Normen beschrieben. In Deutschland gilt ebenfalls noch die Datenschutz-Grundverordnung (kurz DSGVO). Diese Europäische Richtlinie vereinheitlicht die Regelungen zur Verarbeitung von personenbezogenen Daten in Europa und beschreibt unter anderem die Pflichten des Anbieters. Dabei gilt nach Artikel 25 der DSGVO, dass der Anbieter des Endsystems den Datenschutz im Rahmen seiner technischen Möglichkeiten umsetzten muss. Was Datenschutz eigentlich ist, wird dabei genauer in Art. 5 bis 9 beschrieben.
+Zusätzlich müssen bei der Verarbeitung von Daten in Deutschland, abhängig von Art und Schutzbedarf, gewisse Regelungen zur Informationssicherheit und zum Datenschutz beachtet werden. Das Bundesamt für Sicherheit in der Informationstechnik (kurz BSI) hat hierfür Standards erstellt mit denen eine Risikoanalyse durchgeführt werden kann. Anforderungen und Bewertungen werden dabei in Reihe 2700-x der ISO Normen beschrieben. 
+In Deutschland gilt ebenfalls noch die Datenschutz-Grundverordnung (kurz DSGVO). Diese Europäische Richtlinie vereinheitlicht die Regelungen zur Verarbeitung von personenbezogenen Daten in Europa und beschreibt unter anderem die Pflichten des Anbieters. Dabei gilt nach Artikel 25 der DSGVO, dass der Anbieter des Endsystems den Datenschutz im Rahmen seiner technischen Möglichkeiten umsetzten muss. Was Datenschutz eigentlich ist, wird dabei genauer in Art. 5 bis 9 beschrieben.
 
 Bei der hier angesprochenen Nutzung von Cloud Diensten werden diese Regelungen noch erweitert. Dazu steht in Art. 44 DSGVO, dass die Übertragung von Daten an ein Drittland oder eine internationale Organisation nur zulässig ist, wenn sichergestellt werden kann, dass die Bemühungen zum Datenschutz eingehalten werden.
 
-Das BSI hat hierfür den ”Mindeststandart des BSI zur Nutzung externer Cloud-Dienste”herausgegeben. Dieser richtet sich nach § 8 Absatz 1 Satz 1 des Gesetztes über das Bundesamt für Sicherheit in der Informationstechnik (kurz BSIG). Dabei müssen alle Daten
- in vorgegebene Kategorien einsortiert werden:
+Das BSI hat hierfür den ”Mindeststandart des BSI zur Nutzung externer Cloud-Dienste”herausgegeben. Dieser richtet sich nach § 8 Absatz 1 Satz 1 des Gesetztes über das Bundesamt für Sicherheit in der Informationstechnik (kurz BSIG). Dabei müssen alle Daten in vorgegebene Kategorien einsortiert werden:
 
 - Kategorie 1: Privat und Dienstgeheimnisse
 - Kategorie 2: personenbezogene Daten
 - Kategorie 3: Verschlusssachen gemäß allgemeiner Verwaltungsvorschrift
 - Kategorie 4: sonstige Daten welche nicht in die vorherigen Kategorien einsortiert werden konnten.
 
-Je nach Kategorisierung der Daten müssen die Cloud Dienste dann die Vorgaben des Änforderungskatalog Cloud Computing des BSI”(kurz C5) erfüllen. Darin werden Auswahlprozesse für den Cloud Anbieter, sowie empfohlene vertragliche Regelungen festgelegt.
+Je nach Kategorisierung der Daten müssen die Cloud Dienste dann die Vorgaben des Anforderungskatalog Cloud Computing des BSI (kurz C5) erfüllen. Darin werden Auswahlprozesse für den Cloud Anbieter, sowie empfohlene vertragliche Regelungen festgelegt.
 
-Auf Grundlage dieser Regelungen und extra Anforderungen, wurde entschieden für diese Arbeit die oben genannten Offline Tools zu nutzen.
+Auf Grundlage dieser Regelungen und neuen Anforderungen an ein Endsystem, wurde entschieden für diese Arbeit die oben genannten Offline Tools zu nutzen.
 
 ## Kontext Detektion
 
-- [ ] Warum?
-- [ ] Wie umgesetzt?
-    - [ ] klassischer Algorithmus (Entscheidungsbaum)
-    - [ ] Tensorflow
-    - [ ] Gegenüberstellung der beiden Methoden
-- [ ] IST KI WIRCKLICH NOTWENDIG?
+Um die Nutzung der Daten zu vereinfachen wurde eine Kontext Detektion entwickelt. Diese soll die Art der erkannten Daten erkennen, damit diese leichter von einem weiteren System wir z.b. Microsoft Excel verarbeitet werden können. 
 
-Dafür wurden 5 Möglichkeiten definiert. 
+Dafür wurden 5 Mögliche Klassifizierung der Daten definiert. 
 
 1. Zahlen
 2. Text
-3. Angaben in Prozent
-4. Physikalisch Angaben 
-5. Adressen
-6. Datum
+3. Kommazahl
+4. Angaben in Prozent
+5. Physikalisch Angaben 
+6. Adressen
+7. Datum
+8. Mix aus mehreren Daten
 
+Um diese Daten zu klassifizieren werden zunächst Eigenschaften der Daten identifiziert, z.b. Länge des Datensatzes oder die Anwesenheit bestimmter Zeichen wie Punkte oder Zahlen. 
+Aus diesen lassen sich den oben gennanten Klassifizierungen ebefalls Eigenschaften zuweisen. Aus dieser Zuweisung lässt sich dann ein Entscheidungsbaum erstellen welcher die Klassifizierung durchführt.
+Eine weitere Möglichkeit der Umsetzung besteht durch den Einsatz eines  Neuronalen Netzes. Das Netz fungiert dabei selbst als Entscheidungsbaum, nur das die Entscheidungen vom Netz berechnet werden. 
 
+Beide Methoden haben ihre vor und Nachteile.
+
+Da ein klassischer Entscheidungsbaum mit Hintergrundwissen des Entwicklers erstellt wird, kann mit sehr wenigen Beispieldaten gearbeitet werden wohingegen ein NN viele Daten benötigt um daraus zu lernen. Dabei nutzt das Netz allerdings alle Daten und kann auch Verbindungen ziehen die ein Mensch nicht in Betracht ziehen würde. Das Netz kann außerdem deutlich mehr Beispiele in kürzerer Zeit in  Betracht ziehen und durch die interne Gewichtung deulich Präziser werden und sich an mehr Szenarien anpassen.
+
+In dieser speziellen Anwendung ist die Anzahl von Daten kein Problem. Zahlen jeglicher Art lassen sich durch Zufallsfunktionen erstellen und Texte aus Wörtern zusammensetzten. Dabei kann eine Wörterliste des Duden als Grundlage genutzt werden, so dass alle Wörter an sich auch Sinn ergeben. 
+Adressen können unterschiedlich zusammengesetzt werden, da z.b. Firmen eine andere Anschrift haben können als normale Häuser. Hier können allerdings auch Real Daten aus dem Telefonbuch oder von Google Maps verwendet werden. 
+
+Nachdem die Datenproblematik kein Problem ist, wie verhält sich der Zeitliche Aufwand? 
+
+Das Entsprechende NN kann von einem geübten Entwickler in ca. 15 min erstellt werden. Das Training mit 50.000 Datensätzen benötigte ca. 1 min um eine Präzision von 93% zu erreichen. 
+Ein Entscheidungsbaum muss bei 7 Eigenschaften für diese Anwendung $2^7 = 128$ verschiedene Kombinationen erfassen, auswerten und Programmieren. Die Programierung ist dabei recht einfach umzusetzten, weswegen hier wegen der vielen Zeilen Code ca. 30 min geplant werden. Der Aufwand die Kombinationen zu verbinden ist schwer zu schätzen, bei einem Fall wie diesem sollte es aber nicht alzu schwer sein, weswegen dafür weitere 30 minuten eingeplant werden. 
+
+Der Vergleich wird hierbei stark durch einige Variablen verwässert. So werden hier Kennwerte genutzt welche vorher von einem Menschen festgelegt wurden, also schon eine Vorauswahl haben. Außerdem ist das Training des NN auf einem speziell dafür ausgelegten Server ausgeführt worden, wodurch die Trainingszeit natürlich deutlich optimiert ist. 
+
+### Welcher Ansatz sollte hier also gewählt werden?
+
+In diesem Konkreten Fall kann das Neuronale Netz viel Zeit ersparen. Das Problem ist jedoch auch durch klassische Algorithmen lösbar, welche gerade in diesem Fall zu einem besseren Ergebnis fürhren. 
+
+Die Stärke der Neuronalen Netze ist zwar deutlich jedoch ist dieses Problem noch zu klein um Sie wircklich zu nutzen.
 
 ## Prototypische Umsetzung
 
-Um eine Real Anwendung zu demonstrieren, wurde die Pipeline in einem Prototyp umgesetzt. Dieser wurde in Form einer IPhone Application ausgearbeitet um ein reales Beispiel zu bilden.
+Um den Einsatz der Theorie in einem realen Szenario zu demonstrieren, wurde die Pipeline in einem Prototyp umgesetzt. Dieser wurde in Form einer I-Phone Application ausgearbeitet um einem realen Beispiel möglichst nah zu kommen.
 Da sich nicht alle Teile der Pipeline im IOS System umsetzten lassen, wurden Teile wie die Tabellen Erkennung durch das YOLO Netz an eine Server-Applikation ausgelagert. 
+
+In der App kann ein Nutzer ein Foto wählen welches dann analysiert wird. Das Ergebnis wird dann an den Nutzer ausgegeben so dass er es exportieren kann. 
+
 #### Server
 Die Server-Applikation wurde in Python mit dem Flask Framework umgesetzt. Mit Flask lassen sich einfach APIs erstellen, welche als Schnittstelle zwischen dem Server und der App fungiert. 
 
 Der Server übernimmt hier die Umsetzung des YOLO Netzes, sowie die Kontext Detektion. Dafür sendet die App ein entsprechendes Bild oder eine entsprechende Zeichenkette an den Server und erhält eine entsprechende Antwort.
 #### App
+
+Die App wurde komplett in Swift geschrieben. Dabei kann der Nutzer ein entsprechendes Bild auswählen, welches die App zunächst an den Server sendet. Das Ergebnis wird dann mit der Hilfe des Vision Framework analysiert und die Textbausteine werden erkannt. 
+
+Da die Textbausteine in keiner spezifischen Reihenfolge ausgegeben werden wurde ein Algorithmus geschrieben, welcher diese nach Position sortiert. Im Anschluss kann das Ergebnis ausgegeben werden. 
+
+
 
 +++
 
