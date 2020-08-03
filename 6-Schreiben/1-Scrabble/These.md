@@ -117,7 +117,13 @@ Um die Optimierung weiter zu unterstützen, können Optimierungsalgorithmen eing
 
 Adam wurde von Diederik P. Kingma der University of Amsterdam und Jimmy Lei Ba der University Toronto entwickelt. In ihrem Paper bezeichnen Sie diesen Algorithmus als sehr effizient, scallierbar und gut für Probleme geeignet, in welchen viele Parameter genutzt werden. Dabei soll Adam wenig Speicher verbrauchen. Auf Grundlage dieser Eigenschaften wurde Adam für einige Tests eingesetzt.
 
-### CNN
+### CNN - Convolutional Neural Network
+
+Ein Convolutional Neural Network ist eine Netz Architektur, welche besonders gut für die Bilderkennung verwendet werden kann. 
+Dabei werden Bilder als Matrizen ins Netz geladen und analysiert. Hierfür werden Convolutional Layer eingesetzt welche einen Kernel mit vorher festgelegter Größe über die Matrix schieben und die Werte per Skalarprodukt miteinander verrechnen. Durch das Skalarprodukt “*reagieren*” die einzelnen Zellen auf ihre Nachbarn und es wird schrittweise eine neue Matrix erstellt. 
+Beim Training des Netzes wird hier der Filter festgelegt welcher zum Schluss über das Netz wandert.
+
+Die meisten CNN besitzen zur Vereinfachung des Problems noch Pooling Layer. Diese fassen Schichten des Netzes zusammen und entfernen somit überflüssige Informationen.  
 
 ## PDF
 PDF ist ein plattformunabhängiges Dateiformat und wurden 1993 von Adobe Inc. entwickelt und veröffentlicht. Es ist dabei Teil des offenen Standards nach ISO 32000.
@@ -404,6 +410,8 @@ Um die Aufbereitung weiter zu Unterstützen wurden zusätzlich erste Tests mit e
 
 ![Ergebnis](/Users/christian/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents/6-Thesis/Ergebnis.png)
 
+Das Program wurde zu Testzwecken auf einem MacBook Air ausgeführt. 
+
 
 
 #### App
@@ -415,9 +423,47 @@ Hierzu wird das Bild zunächst an den Server gesendet. Die Antwort wird dann mit
 Da die Textbausteine in keiner spezifischen Reihenfolge ausgegeben werden wurde ein Algorithmus geschrieben, welcher diese nach Position sortiert. Im Anschluss kann das Ergebnis ausgegeben werden. 
 
 # Schluss
+
 ## Fazit
+
+
+
 ## Ausblick und Verbesserungen
 
+Das hier erstellte System ist nicht perfekt. Neben Optimierungsmöglichkeiten oder zusätzlichen Anwendungen welche in der Arbeit bereits besprochen wurden, besteht das Problem des zeitlichen Aufwands welchen das System nun stellt. Eine Möglichkeit der Beschleunigung besteht hier mit dem Einsatz beser optimierterer Hardware oder dem Einsatz neuer technischer Methodiken wie Beispielsweise dem Einsatz eines Quantencomputers.
 
+Ein klassischer Computer rechnet auf Hardware Ebene mit Bits. Dabei können diese einen Zustand von 0 oder 1 annehmen, woraus sich mittels Logik Schaltungen erstellen lassen. Quantencomputer nutzen Qubits für die Berechnung. 
+Ein Qubit nimmt dabei bis zum Zeitpunkt der eigentlichen Abfrage jeden möglichen Zustand ein, was Superposition gennant wird. Bei einer Abfrage fällt diese Superposition in sich zusammen und das Qubit nimmt einen Wert an. 
+Vorstellen lässt sich dies in Form einer kugelförmigen Sphäre mit einem Vektor im Mittelpunkt. Der Vektor zeigt dabei auf einen Punkt auf der Sphärenhülle und beschreibt damit die Tendenz des Qubit. Indem wir den Zeiger nun routieren, verändern wir die Tendenz. Dies können wir mit Hilfe von Quantum Gates tun. Das Qubit selbst lässt sich also durch die entsprechende Rotation beschreiben, beziehungsweise mit 4 verschiedenen Inputs. 
 
-*Quantencomputer*
+Werden nun zwei Qubits genutzt, so beeinflussen sich beide Qubits gegenseitig, was wiederum neue Effekte bei der Berechnung ergibt. 
+
+Diese neue Technologie kann nun zur Entwicklung neuer Netze eingesetzt werden, genannt Quanten Neuronale Netze oder QNN. Diese Idee wurde zum ersten mal von Subhash Kak der Oklahoma State University beschrieben. 
+In aktuellen Forschungen lernt das Netz dabei nicht mehr über die Anpassung von Bias, sondern durch die Anpassung der Quantum Gatter. 
+
+Um einen Vergleich der neuen Möglichkeiten zu testen, hat das Team hinter Tensorflow eine Zahlenerkennung in Form eines CNN und eines QNN erstellt. 
+Um diese Aufgabe weiter zu vereinfachen wurden nur Bilder mit einer 3 und einer 6 genutzt. 
+Um diesen Test nachvollziehen zu können, wurde der Test für diese Arbeit nachgebaut. 
+
+In der ursprünglichen Dokumentation wurde die genutzte Hardware nicht beschrieben. Da es sich hier jedoch um ein Forschungsteam von Google handelt, kann davon ausgegangen werden, dass für den Zweck optimierte Hardware eingesetzt wird.
+
+Die Firma IBM hat Forschern ein weites Netz von Quanten Computern zur Verfügung gestellt. Darauf kann jeder Forscher mit einem Account seine eigenen Experimente  berechnen lassen. Der Zugang ist dabei jedoch beschränkt. 
+Für Experimente lassen sich jedoch auch Simulationen nutzen. Diese sind dabei zwar deutlich langsamer, berechnen jedoch das Optimale Ergebnis und es treten keine Schmutzeffekte durch äußere Einflüsse auf, was in praktischen Versuchen durchaus noch der Fall ist. 
+Für die Tests dieser Arbeit wurden Simulatoren genutzt. 
+
+Als Trainingsdatenset wurde der MNIST Datensatz verwendet, welcher Bilder von Zahlen zur Verfügung stellt. 
+
+Aus den Ergebnissen des Tests lässt sich nun das CNN und das QNN gegenüberstellen. Dabei wurden zusätzlich zu den Ergebnissen des Tests noch die Ergebnisse des Tensorflow Teams betrachtet.
+
+|                               | CNN                                                          | QNN                                                          |
+| ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Technische Voraussetzung**  | Lässt sich auf jeder CPU ausführen                           | Benötigt eine Spezielle Technische Ausstattung               |
+| **Trainingszeit**             | Tensorflow Team: *ca. 3 sec*<br />eigene Tests: *ca. 33 sec* | Tensorflow Team: *ca 20 min*<br />eigene Tests: *ca. 4 Stunden und 9 Minuten* |
+| **Präzision des Ergebnisses** | Tensorflow Team: *99%*<br />eigene Tests: *99%*              | Tensorflow Team: *85%*<br />eigene Tests: *85%*              |
+
+Im direkten Vergleich stellen sich mehrere Unterschiede heraus. Zum einen lässt sich das QNN nicht ohne weiteres einsetzten, da eine spezielle Technische Ausstattung benötigt wird, welche häufig nicht zur Verfügung steht. Zum anderen zeigen die teilweise deutlich besseren Trainingszeiten des Tensorflow Teams, wie wichtig opimierte Hardware bei dieser Themaik ist. 
+
+Im direkten Vergleich des Netz Ergebnisses ist das CNN dem QNN überlegen. Nicht nur wird deutlich weniger Zeit benötigt um das Netz zu trainieren, das Ergebnis ist zusätzlich noch präziser. 
+
+Das Grundsätzliche Prinzip des QNN ist jedoch spannend und es ist nicht auszuschließen das die Technik in Zukunft große Erfolge bringen kann und dabei völlig neue Netze ermöglicht.
+
