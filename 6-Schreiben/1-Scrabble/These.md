@@ -426,6 +426,10 @@ Da die Textbausteine in keiner spezifischen Reihenfolge ausgegeben werden wurde 
 
 ## Fazit
 
+Im Rahmen dieser Arbeit wurde ein System erschaffen um Tabellen aus gegebenen digtalen Dokumenten zu extrahieren und in Daten umzuwandeln. Dieses System zeigte nicht nur in Tests seine Stärken, sondern auch in einem funktionierenden Prototyp.
+
+
+
 
 
 ## Ausblick und Verbesserungen
@@ -440,6 +444,8 @@ Werden nun zwei Qubits genutzt, so beeinflussen sich beide Qubits gegenseitig, w
 
 Diese neue Technologie kann nun zur Entwicklung neuer Netze eingesetzt werden, genannt Quanten Neuronale Netze oder QNN. Diese Idee wurde zum ersten mal von Subhash Kak der Oklahoma State University beschrieben. 
 In aktuellen Forschungen lernt das Netz dabei nicht mehr über die Anpassung von Bias, sondern durch die Anpassung der Quantum Gatter. 
+
+Es sei zu beachten, dass der Einsatz eines Quanten Computer nicht zwangsläufig bedeutet das man das vorhandene Netz beschleunigt. Es ist eher eine völlig neue Methode zur Erstellung von Netzen. 
 
 Um einen Vergleich der neuen Möglichkeiten zu testen, hat das Team hinter Tensorflow eine Zahlenerkennung in Form eines CNN und eines QNN erstellt. 
 Um diese Aufgabe weiter zu vereinfachen wurden nur Bilder mit einer 3 und einer 6 genutzt. 
